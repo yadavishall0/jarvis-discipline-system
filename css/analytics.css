@@ -1,0 +1,156 @@
+/* JARVIS Personal Discipline System - Analytics & Discipline Score Screen */
+
+.analytics-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 90px;
+}
+
+/* Big Discipline Score Hero */
+.score-hero-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hud);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+.score-tagline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--color-cyan);
+}
+
+.score-display-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 12px 0 6px 0;
+}
+
+.score-big-number {
+  font-family: var(--font-mono);
+  font-size: 64px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 20px var(--color-cyan-glow);
+}
+
+.score-total-denom {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--text-muted);
+}
+
+.jarvis-assessment-quote {
+  font-style: italic;
+  color: var(--color-emerald);
+  font-size: 14px;
+  margin-top: 8px;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+/* Streaks Grid */
+.streaks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.streak-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.streak-card i {
+  font-size: 20px;
+  color: var(--color-amber);
+  margin-bottom: 2px;
+}
+
+.streak-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.streak-val {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* Breakdown List */
+.breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.breakdown-item {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface-elevated);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--color-cyan);
+}
+
+/* Adaptive Recommendations */
+.adaptive-rec-card {
+  background: rgba(0, 229, 255, 0.08);
+  border: 1px solid var(--border-hud);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rec-header {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-cyan);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rec-reason {
+  font-size: 13px;
+  color: var(--color-amber);
+  font-weight: 600;
+}
+
+.rec-suggestion {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
