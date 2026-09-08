@@ -1,0 +1,173 @@
+/* JARVIS Personal Discipline System - Focus Mode HUD */
+
+.focus-overlay {
+  position: fixed;
+  inset: 0;
+  background: #04070e;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 32px 20px;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.08) 0%, transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+.focus-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.focus-tagline {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--color-cyan);
+  letter-spacing: 3px;
+}
+
+.focus-mission-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.focus-mission-category {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Center Timer Graphic */
+.focus-center-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.focus-timer-ring-container {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 229, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 35px rgba(0, 229, 255, 0.15), inset 0 0 25px rgba(0, 229, 255, 0.1);
+}
+
+.focus-timer-ring-container::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 229, 255, 0.4);
+  animation: rotate-ring 60s infinite linear;
+}
+
+@keyframes rotate-ring {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.focus-countdown {
+  font-family: var(--font-mono);
+  font-size: 42px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 0 15px var(--color-cyan-glow);
+}
+
+.focus-status-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--color-emerald);
+  margin-top: 4px;
+}
+
+.focus-target-container {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-hud);
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-emerald);
+}
+
+/* Bottom Controls */
+.focus-footer-controls {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.focus-progress-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.focus-button-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 10px;
+}
+
+/* Verification Modal Input */
+.verification-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.verification-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.verification-field label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.verification-input {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  outline: none;
+}
+
+.verification-input:focus {
+  border-color: var(--color-cyan);
+}
+
+.verification-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
