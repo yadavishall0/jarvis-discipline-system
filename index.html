@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>JARVIS — Personal Discipline System</title>
+
+  <!-- PWA Manifest & Meta Tags -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#00e5ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="JARVIS">
+  <link rel="icon" type="image/png" href="./assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+
+  <!-- Font Awesome Icons & JetBrains Mono Font -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Modular CSS Architecture -->
+  <link rel="stylesheet" href="./css/core.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
+  <link rel="stylesheet" href="./css/focus.css">
+  <link rel="stylesheet" href="./css/routine.css">
+  <link rel="stylesheet" href="./css/analytics.css">
+  <link rel="stylesheet" href="./css/settings.css">
+  <link rel="stylesheet" href="./css/responsive.css">
+</head>
+<body>
+
+  <!-- TOP HUD SYSTEM STATUS BAR -->
+  <header class="hud-header">
+    <div class="hud-header-inner">
+      <div class="hud-top-row">
+        <div class="hud-brand">
+          <div class="hud-core-indicator"></div>
+          <div>
+            <div class="hud-app-name">JARVIS <span style="font-size:10px; color:var(--text-muted); font-weight:normal;">v1.0</span></div>
+            <div class="hud-core-status">SYSTEM ONLINE // COMBAT READY</div>
+          </div>
+        </div>
+
+        <div class="hud-clock-block">
+          <div id="hud-current-clock" class="hud-clock-time">00:00:00</div>
+          <div id="hud-current-date" class="hud-clock-date">LOADING DATE</div>
+        </div>
+      </div>
+
+      <!-- Live Tactical Metrics Row -->
+      <div class="hud-metrics-row">
+        <div class="hud-metric-box">
+          <span class="metric-label">DISCIPLINE</span>
+          <span id="hud-score-value" class="metric-value highlight-cyan">--</span>
+        </div>
+        <div class="hud-metric-box">
+          <span class="metric-label">RECOVERY DEBT</span>
+          <span id="hud-debt-value" class="metric-value highlight-amber">0m</span>
+        </div>
+        <div class="hud-metric-box">
+          <span class="metric-label">ENFORCEMENT</span>
+          <span id="hud-enforcement-mode" class="metric-value">STRICT</span>
+        </div>
+        <div class="hud-metric-box">
+          <span class="metric-label">CURRENT</span>
+          <span id="hud-current-task-tag" class="metric-value highlight-emerald" style="font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;">STANDBY</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN SCREENS CONTAINER -->
+  <main id="app-main-content">
+
+    <!-- 1. DASHBOARD / MISSION CONTROL SCREEN -->
+    <section id="screen-dashboard" class="app-screen">
+      <div class="dashboard-container">
+
+        <!-- Escalating Alert Banner (Levels 1 to 5) -->
+        <div id="escalation-alert-banner" class="escalation-alert hidden"></div>
+
+        <!-- Dynamic Recovery Proposal Card (Visible when debt > 0) -->
+        <div id="recovery-proposal-card" class="recovery-proposal-card hidden"></div>
+
+        <!-- CURRENT MISSION HERO CARD -->
+        <div id="current-mission-hero" class="current-mission-hero">
+          <div class="hero-empty-state">
+            <div class="hud-radar-pulse"></div>
+            <h3>INITIALIZING RADAR...</h3>
+            <p>Evaluating routine timeline parameters.</p>
+          </div>
+        </div>
+
+        <!-- Cognitive Load & Energy Awareness -->
+        <div class="hud-panel" style="padding: 12px 16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="mono" style="font-size:11px; color:var(--text-muted); font-weight:700;">TACTICAL ENERGY LEVEL</span>
+            <button id="btn-emergency-override" class="btn btn-danger-outline btn-sm">
+              <i class="fa-solid fa-shield-halved"></i> EMERGENCY OVERRIDE
+            </button>
+          </div>
+          <div class="energy-selector-row">
+            <button class="energy-selector-btn" data-energy="High"><i class="fa-solid fa-bolt"></i> HIGH (DEEP WORK)</button>
+            <button class="energy-selector-btn" data-energy="Medium"><i class="fa-solid fa-battery-half"></i> MEDIUM (BALANCED)</button>
+            <button class="energy-selector-btn" data-energy="Low"><i class="fa-solid fa-battery-quarter"></i> LOW (REVISION / PYQ)</button>
+          </div>
+        </div>
+
+        <!-- UPCOMING MISSIONS QUEUE -->
+        <div class="upcoming-section">
+          <div class="section-header">
+            <span><i class="fa-solid fa-list-ol"></i> UPCOMING MISSIONS</span>
+            <span class="mono" style="color:var(--color-cyan); cursor:pointer;" onclick="App.navigateTo('screen-routine')">FULL ROUTINE &rarr;</span>
+          </div>
+          <div id="upcoming-missions-list" class="upcoming-list">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 2. ROUTINE SCREEN (TIMELINE & BUILDER) -->
+    <section id="screen-routine" class="app-screen hidden">
+      <div class="routine-container">
+        <div class="routine-header-row">
+          <div>
+            <h2 class="hud-title" style="font-size:18px; color:#fff;">TODAY'S MISSION TIMELINE</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-top:2px;">Tactical sequence for 24-hour cycle.</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="Routine.resetToDefault(); App.renderRoutineTimeline(); App.renderDashboard();">
+            <i class="fa-solid fa-rotate-left"></i> RESET ROUTINE
+          </button>
+        </div>
+
+        <!-- Interactive Vertical Timeline Feed -->
+        <div id="routine-timeline-container" class="timeline-feed">
+          <!-- Rendered by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. GATE MODE SCREEN (EXAM SYLLABUS & MASTERY) -->
+    <section id="screen-gate" class="app-screen hidden">
+      <div class="routine-container">
+        <div class="score-hero-card" style="padding: 18px;">
+          <div class="score-tagline">GATE PREPARATION COMMAND</div>
+          <div class="hud-metrics-row" style="width:100%; margin-top:14px;">
+            <div class="hud-metric-box">
+              <span class="metric-label">OVERALL READINESS</span>
+              <span id="gate-readiness-val" class="metric-value highlight-cyan">--%</span>
+            </div>
+            <div class="hud-metric-box">
+              <span class="metric-label">SOLVED PYQS</span>
+              <span id="gate-solved-val" class="metric-value highlight-emerald">--</span>
+            </div>
+            <div class="hud-metric-box">
+              <span class="metric-label">COUNTDOWN</span>
+              <span id="gate-countdown-val" class="metric-value highlight-amber">-- DAYS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header" style="margin-top:10px;">
+          <span><i class="fa-solid fa-graduation-cap"></i> SYLLABUS MASTERY BREAKDOWN</span>
+        </div>
+
+        <!-- Subjects Container -->
+        <div id="gate-subjects-container" style="display:flex; flex-direction:column; gap:14px;">
+          <!-- Rendered by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. ANALYTICS SCREEN (DISCIPLINE SCORE & HISTORY) -->
+    <section id="screen-analytics" class="app-screen hidden">
+      <div class="analytics-container">
+        
+        <!-- Score Hero -->
+        <div class="score-hero-card">
+          <div class="score-tagline">OFFICIAL DISCIPLINE RATING</div>
+          <div class="score-display-row">
+            <span id="analytics-score-big" class="score-big-number">100</span>
+            <span class="score-total-denom">/ 100</span>
+          </div>
+          <div id="analytics-jarvis-assessment" class="jarvis-assessment-quote">
+            "Evaluating routine telemetry."
+          </div>
+        </div>
+
+        <!-- Streaks Grid -->
+        <div class="streaks-grid">
+          <div class="streak-card">
+            <i class="fa-solid fa-fire"></i>
+            <span class="streak-label">ROUTINE STREAK</span>
+            <span id="streak-routine-val" class="streak-val">1 DAYS</span>
+          </div>
+          <div class="streak-card">
+            <i class="fa-solid fa-brain"></i>
+            <span class="streak-label">STUDY STREAK</span>
+            <span id="streak-study-val" class="streak-val">1 DAYS</span>
+          </div>
+          <div class="streak-card">
+            <i class="fa-solid fa-crosshairs"></i>
+            <span class="streak-label">ON-TIME STREAK</span>
+            <span id="streak-ontime-val" class="streak-val">1 DAYS</span>
+          </div>
+        </div>
+
+        <!-- Transparent Formula Breakdown -->
+        <div class="hud-panel">
+          <div class="settings-group-title"><i class="fa-solid fa-calculator"></i> TRANSPARENT SCORING BREAKDOWN</div>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">Every deduction and achievement is logged with zero hidden algorithms.</p>
+          <div id="analytics-breakdown-list" class="breakdown-list">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+
+        <!-- Adaptive Routine Recommendations -->
+        <div class="hud-panel">
+          <div class="settings-group-title"><i class="fa-solid fa-microchip"></i> ADAPTIVE AI RECOMMENDATIONS</div>
+          <div id="analytics-recommendations-list" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+            <!-- Rendered by app.js -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. JARVIS AI CONSOLE -->
+    <section id="screen-jarvis" class="app-screen hidden">
+      <div class="console-container">
+        <!-- Feed Log -->
+        <div id="jarvis-console-feed" class="console-feed">
+          <div class="console-entry entry-jarvis">
+            <div class="console-entry-header">
+              <span class="console-tag tag-jarvis">JARVIS</span>
+              <span class="console-timestamp">SYSTEM START</span>
+            </div>
+            <div class="console-entry-body">
+              Good day, Commander. JARVIS Discipline Core is active. I am monitoring your daily schedule, enforcing timelines, and calculating recovery parameters. Speak or enter a command below.
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Action Chips -->
+        <div class="quick-cmds-bar">
+          <button class="quick-cmd-chip" data-cmd="current mission"><i class="fa-solid fa-crosshairs"></i> Current Mission</button>
+          <button class="quick-cmd-chip" data-cmd="what's next"><i class="fa-solid fa-forward"></i> Next Mission</button>
+          <button class="quick-cmd-chip" data-cmd="start mission"><i class="fa-solid fa-play"></i> Start Mission</button>
+          <button class="quick-cmd-chip" data-cmd="recovery debt"><i class="fa-solid fa-rotate-right"></i> Recovery Debt</button>
+          <button class="quick-cmd-chip" data-cmd="discipline score"><i class="fa-solid fa-star"></i> Discipline Score</button>
+          <button class="quick-cmd-chip" data-cmd="gate progress"><i class="fa-solid fa-graduation-cap"></i> GATE Progress</button>
+          <button class="quick-cmd-chip" data-cmd="today's report"><i class="fa-solid fa-chart-pie"></i> Daily Report</button>
+        </div>
+
+        <!-- Input Box & Mic -->
+        <div class="console-input-row">
+          <button id="btn-jarvis-mic" class="btn-mic" title="Speak to JARVIS">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <input type="text" id="jarvis-cmd-input" class="console-input" placeholder="Give command (e.g. 'start mission', 'what's next')..." autocomplete="off">
+          <button id="btn-jarvis-send" class="btn btn-primary" style="padding:0 18px;">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. SETTINGS & TEST SIMULATOR SCREEN -->
+    <section id="screen-settings" class="app-screen hidden">
+      <div class="settings-container">
+
+        <!-- General Settings -->
+        <div class="settings-group">
+          <div class="settings-group-title"><i class="fa-solid fa-sliders"></i> GENERAL PARAMETERS</div>
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Callsign / Name</span>
+              <span class="setting-desc">How JARVIS addresses you</span>
+            </div>
+            <div class="setting-control">
+              <input type="text" id="setting-username" class="hud-input" value="Commander">
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Clock Format</span>
+              <span class="setting-desc">24-hour military vs 12-hour AM/PM</span>
+            </div>
+            <div class="setting-control">
+              <select id="setting-timeformat" class="hud-select">
+                <option value="24h">24-Hour Military</option>
+                <option value="12h">12-Hour AM/PM</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Target Examination</span>
+              <span class="setting-desc">Primary competitive milestone</span>
+            </div>
+            <div class="setting-control" style="display:flex; flex-direction:column; gap:6px;">
+              <input type="text" id="setting-exam-name" class="hud-input" value="GATE 2027">
+              <input type="date" id="setting-exam-date" class="hud-input" value="2027-02-06">
+            </div>
+          </div>
+        </div>
+
+        <!-- Enforcement Settings -->
+        <div class="settings-group">
+          <div class="settings-group-title"><i class="fa-solid fa-shield-halved"></i> ENFORCEMENT & DISCIPLINE LEVEL</div>
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Enforcement Mode</span>
+              <span class="setting-desc">Normal (flexible) / Strict (standard) / Hardcore (zero tolerance)</span>
+            </div>
+            <div class="setting-control">
+              <select id="setting-enforcement" class="hud-select">
+                <option value="NORMAL">NORMAL (Moderate)</option>
+                <option value="STRICT" selected>STRICT (Escalating)</option>
+                <option value="HARDCORE">HARDCORE (Aggressive)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Voice & Audio Settings -->
+        <div class="settings-group">
+          <div class="settings-group-title"><i class="fa-solid fa-volume-high"></i> VOICE SYNTHESIS & SFX</div>
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">JARVIS Voice Announcements</span>
+              <span class="setting-desc">Web Speech spoken feedback</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-voice-enabled" checked>
+              <span class="slider-round"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Voice Selection</span>
+              <span class="setting-desc">Detected browser speech synthesizers</span>
+            </div>
+            <div class="setting-control">
+              <select id="setting-voice-select" class="hud-select"></select>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Speech Rate</span>
+              <span class="setting-desc">Pacing of spoken commands</span>
+            </div>
+            <div class="setting-control">
+              <input type="range" id="setting-voice-rate" class="hud-slider" min="0.7" max="1.4" step="0.05" value="1.0">
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Speech Pitch</span>
+              <span class="setting-desc">Calm masculine AI pitch</span>
+            </div>
+            <div class="setting-control">
+              <input type="range" id="setting-voice-pitch" class="hud-slider" min="0.7" max="1.3" step="0.05" value="0.95">
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Tactical HUD Sound Effects</span>
+              <span class="setting-desc">Web Audio synthesized clicks & alarms</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-sfx-enabled" checked>
+              <span class="slider-round"></span>
+            </label>
+          </div>
+
+          <button id="btn-test-voice" class="btn btn-secondary btn-sm" style="width:fit-content;">
+            <i class="fa-solid fa-play"></i> TEST JARVIS AUDIO
+          </button>
+        </div>
+
+        <!-- Notifications -->
+        <div class="settings-group">
+          <div class="settings-group-title"><i class="fa-solid fa-bell"></i> SYSTEM NOTIFICATIONS</div>
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Web Notifications</span>
+              <span class="setting-desc">Status: <span id="notif-perm-status" class="hud-badge badge-warning">CHECKING</span></span>
+            </div>
+            <button id="btn-request-notif" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-key"></i> GRANT PERMISSION
+            </button>
+          </div>
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Allow Background Alerts</span>
+              <span class="setting-desc">Receive mission start and late notices</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setting-notif-enabled" checked>
+              <span class="slider-round"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Data Management -->
+        <div class="settings-group">
+          <div class="settings-group-title"><i class="fa-solid fa-database"></i> LOCAL DATA MANAGEMENT</div>
+          <p style="font-size:12px; color:var(--text-muted);">All records remain strictly on your device. Export regularly to prevent loss.</p>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;">
+            <button id="btn-export-data" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-download"></i> EXPORT BACKUP JSON
+            </button>
+            <button id="btn-import-data" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-upload"></i> IMPORT BACKUP JSON
+            </button>
+            <input type="file" id="file-import-input" accept=".json" class="hidden">
+            <button id="btn-reset-factory" class="btn btn-danger-outline btn-sm">
+              <i class="fa-solid fa-trash-can"></i> FACTORY RESET
+            </button>
+          </div>
+        </div>
+
+        <!-- DEVELOPER & TEST SIMULATION PANEL -->
+        <div class="settings-group" style="border-color: rgba(245, 158, 11, 0.4);">
+          <div class="settings-group-title" style="color:var(--color-amber);">
+            <i class="fa-solid fa-flask"></i> DEVELOPER / TEST SCENARIO SIMULATOR
+          </div>
+          <p style="font-size:12px; color:var(--text-muted);">
+            Accelerate clock or simulate escalation levels to test all 18 test cases.
+          </p>
+
+          <div class="setting-row">
+            <div class="setting-label-col">
+              <span class="setting-label">Time Acceleration</span>
+              <span class="setting-desc">Simulate minutes passing in seconds</span>
+            </div>
+            <div class="setting-control">
+              <select id="sim-speed-select" class="hud-select">
+                <option value="1">1x Real Time</option>
+                <option value="10">10x Speed</option>
+                <option value="60">60x (1 sec = 1 min)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sim-controls-grid">
+            <button id="btn-sim-advance-5" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-forward-step"></i> +5 MINS
+            </button>
+            <button id="btn-sim-advance-10" class="btn btn-secondary btn-sm">
+              <i class="fa-solid fa-forward-step"></i> +10 MINS
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="Settings.simulateLevel(2)">
+              SIMULATE LEVEL 2 (5m Late)
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="Settings.simulateLevel(4)">
+              SIMULATE LEVEL 4 (Critical)
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="Settings.simulateAppRestartInterrupted()">
+              SIMULATE APP RESTART
+            </button>
+            <button id="btn-sim-reset" class="btn btn-warning btn-sm">
+              <i class="fa-solid fa-rotate-left"></i> RESET SIMULATION
+            </button>
+          </div>
+        </div>
+
+        <button id="btn-save-settings" class="btn btn-primary btn-lg" style="width:100%;">
+          <i class="fa-solid fa-floppy-disk"></i> SAVE SETTINGS
+        </button>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TACTICAL BOTTOM NAVIGATION (MOBILE FIRST) -->
+  <nav class="hud-bottom-nav">
+    <button class="nav-btn active" data-screen="screen-dashboard">
+      <i class="fa-solid fa-crosshairs"></i>
+      <span>HOME</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-routine">
+      <i class="fa-solid fa-calendar-days"></i>
+      <span>ROUTINE</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-gate">
+      <i class="fa-solid fa-graduation-cap"></i>
+      <span>GATE</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-analytics">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>DISCIPLINE</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-jarvis">
+      <i class="fa-solid fa-terminal"></i>
+      <span>JARVIS</span>
+    </button>
+    <button class="nav-btn" data-screen="screen-settings">
+      <i class="fa-solid fa-gear"></i>
+      <span>CONFIG</span>
+    </button>
+  </nav>
+
+  <!-- ==================== MODALS & OVERLAYS ==================== -->
+
+  <!-- 1. FULL-SCREEN FOCUS MODE OVERLAY -->
+  <div id="focus-overlay" class="focus-overlay hidden">
+    <div class="focus-header">
+      <div class="focus-tagline">JARVIS FOCUS MODE // DEEP WORK ACTIVE</div>
+      <h2 id="focus-mission-title" class="focus-mission-title">MISSION TITLE</h2>
+      <div id="focus-mission-category" class="focus-mission-category">GATE MISSION // FOCUS ACTIVE</div>
+    </div>
+
+    <div class="focus-center-body">
+      <div class="focus-timer-ring-container">
+        <div id="focus-countdown" class="focus-countdown">00:00:00</div>
+        <div class="focus-status-label"><i class="fa-solid fa-circle-dot"></i> SESSION RUNNING</div>
+      </div>
+
+      <div class="focus-target-container">
+        <span id="focus-target-label"><i class="fa-solid fa-bullseye"></i> TARGET: 40 QUESTIONS</span>
+      </div>
+    </div>
+
+    <div class="focus-footer-controls">
+      <div class="focus-progress-wrapper">
+        <div class="hud-progress-bar" style="height: 8px;">
+          <div id="focus-progress-fill" class="hud-progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="focus-button-row">
+        <button id="btn-focus-pause" class="btn btn-secondary">
+          <i class="fa-solid fa-pause"></i> PAUSE
+        </button>
+        <button id="btn-focus-complete" class="btn btn-primary">
+          <i class="fa-solid fa-check-double"></i> COMPLETE
+        </button>
+        <button id="btn-focus-abandon" class="btn btn-danger-outline">
+          <i class="fa-solid fa-xmark"></i> ABANDON
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. STUDY VERIFICATION MODAL -->
+  <div id="modal-verification" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-shield-halved"></i> OUTPUT VERIFICATION</h3>
+      </div>
+      <p style="font-size:13px; color:var(--text-secondary); line-height:1.4;">
+        Timer only measures duration. Verify your actual work completed honestly.
+      </p>
+
+      <div id="verify-target-description" class="mono" style="font-size:12px; color:var(--color-cyan); margin-top:10px;">
+        Target: 40 Questions
+      </div>
+
+      <div class="verification-form">
+        <div class="verification-field">
+          <label>Actual Units Completed (Questions / Lectures / Topics):</label>
+          <input type="number" id="verify-achieved-input" class="verification-input" min="0" value="40">
+        </div>
+
+        <div class="verification-field">
+          <label>Session Notes (Optional):</label>
+          <input type="text" id="verify-notes-input" class="verification-input" placeholder="e.g. Completed ODE Cauchy Problems">
+        </div>
+      </div>
+
+      <div class="verification-actions" style="margin-top:16px;">
+        <button id="btn-verify-full" class="btn btn-primary">
+          <i class="fa-solid fa-check"></i> FULL TARGET ACHIEVED (100%)
+        </button>
+        <button id="btn-verify-partial" class="btn btn-secondary">
+          <i class="fa-solid fa-pie-chart"></i> PARTIAL COMPLETION
+        </button>
+        <button id="btn-verify-fail" class="btn btn-danger-outline">
+          <i class="fa-solid fa-xmark"></i> ZERO WORK ACHIEVED (FAILED)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. DELAY MODAL -->
+  <div id="modal-delay" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> DELAY MISSION</h3>
+        <button class="btn-close-modal" onclick="App.closeDelayModal()">&times;</button>
+      </div>
+      <p id="delay-modal-mission-title" class="mono" style="font-size:14px; font-weight:700; color:var(--color-cyan);"></p>
+      <p style="font-size:13px; color:var(--text-secondary); margin-top:8px;">
+        Repeated delays incur a discipline penalty. Missions have strict maximum delay caps.
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+        <button id="btn-delay-5" class="btn btn-secondary">
+          <i class="fa-solid fa-clock"></i> DELAY BY 5 MINUTES
+        </button>
+        <button id="btn-delay-10" class="btn btn-secondary">
+          <i class="fa-solid fa-clock"></i> DELAY BY 10 MINUTES
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. SKIP MODAL -->
+  <div id="modal-skip" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color:var(--color-crimson);"><i class="fa-solid fa-triangle-exclamation"></i> SKIP MISSION</h3>
+        <button class="btn-close-modal" onclick="App.closeSkipModal()">&times;</button>
+      </div>
+      <p id="skip-modal-mission-title" class="mono" style="font-size:14px; font-weight:700; color:var(--text-primary);"></p>
+      <p id="skip-debt-warning" style="font-size:12px; color:var(--color-amber); margin-top:6px;"></p>
+
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
+        <span class="mono" style="font-size:11px; color:var(--text-muted);">MANDATORY REASON SELECTION:</span>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="skip-reason" value="Emergency" checked> Real-World Emergency
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="skip-reason" value="Illness"> Medical / Illness
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="skip-reason" value="College"> College / University Exam
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="skip-reason" value="Fatigue"> Cognitive Fatigue / Recovery Needed
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="skip-reason" value="Unexpected Event"> Unexpected Urgent Event
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer;">
+          <input type="radio" name="skip-reason" value="Other"> Other Reason
+        </label>
+      </div>
+
+      <div style="margin-top:12px;">
+        <input type="text" id="skip-note-input" class="hud-input" placeholder="Accountability note (optional)...">
+      </div>
+
+      <div style="margin-top:16px;">
+        <button id="btn-confirm-skip" class="btn btn-warning" style="width:100%;">
+          <i class="fa-solid fa-forward"></i> CONFIRM EXPLICIT SKIP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. EMERGENCY OVERRIDE MODAL -->
+  <div id="modal-emergency" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="color:var(--color-crimson);"><i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY OVERRIDE</h3>
+        <button class="btn-close-modal" onclick="App.closeEmergencyModal()">&times;</button>
+      </div>
+      <p style="font-size:13px; color:var(--text-primary); line-height:1.5;">
+        Emergency override suspends all active alarms and enforcement alerts. It does <strong>not</strong> falsely claim that the mission was accomplished. The lost time can be recovered later.
+      </p>
+      <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+        <button id="btn-confirm-emergency" class="btn btn-danger-outline">
+          <i class="fa-solid fa-hand"></i> ENGAGE EMERGENCY OVERRIDE
+        </button>
+        <button class="btn btn-secondary" onclick="App.closeEmergencyModal()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. APP RESTART RECOVERY (MISSION INTERRUPTED) MODAL -->
+  <div id="modal-interrupted" class="modal-overlay hidden">
+    <div class="modal-content" style="border-color:var(--color-amber);">
+      <div class="modal-header">
+        <h3 style="color:var(--color-amber);"><i class="fa-solid fa-power-off"></i> MISSION INTERRUPTED</h3>
+      </div>
+      <div id="interrupted-desc" style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+        <!-- Filled dynamically -->
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
+        <button id="btn-interrupted-resume" class="btn btn-primary">
+          <i class="fa-solid fa-play"></i> RESUME MISSION NOW
+        </button>
+        <button id="btn-interrupted-complete" class="btn btn-secondary">
+          <i class="fa-solid fa-check"></i> VERIFY & COMPLETE
+        </button>
+        <button id="btn-interrupted-abandon" class="btn btn-danger-outline">
+          <i class="fa-solid fa-xmark"></i> ABANDON MISSION
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. FIRST-RUN ONBOARDING WIZARD -->
+  <div id="modal-onboarding" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-microchip"></i> WELCOME TO JARVIS</h3>
+      </div>
+      <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">
+        Your routine is about to become an active system. Let's calibrate your parameters.
+      </p>
+
+      <div style="display:flex; flex-direction:column; gap:14px; margin-top:16px;">
+        <div>
+          <label class="mono" style="font-size:11px; color:var(--color-cyan);">COMMANDER NAME / CALLSIGN:</label>
+          <input type="text" id="onboarding-name" class="hud-input" value="Commander" style="margin-top:4px;">
+        </div>
+
+        <div>
+          <label class="mono" style="font-size:11px; color:var(--color-cyan);">ENFORCEMENT PROTOCOL:</label>
+          <select id="onboarding-mode" class="hud-select" style="margin-top:4px;">
+            <option value="STRICT" selected>STRICT — Persistent warnings & recovery debt (Recommended)</option>
+            <option value="NORMAL">NORMAL — Moderate alerts</option>
+            <option value="HARDCORE">HARDCORE — Immediate debt & zero tolerance</option>
+          </select>
+        </div>
+
+        <div style="background:var(--bg-surface-elevated); padding:10px; border-radius:4px; font-size:12px; color:var(--text-muted); line-height:1.4;">
+          Default routine (05:30 Wake Up, Mathematics, Geotechnical, PYQ Practice, Gym, Revision) has been pre-configured and is fully editable.
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button id="btn-onboarding-finish" class="btn btn-primary" style="width:100%;">
+          <i class="fa-solid fa-bolt"></i> INITIALIZE SYSTEM
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modular Scripts Architecture -->
+  <script src="./data/default-routine.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/state.js"></script>
+  <script src="./js/voice.js"></script>
+  <script src="./js/notifications.js"></script>
+  <script src="./js/routine.js"></script>
+  <script src="./js/mission.js"></script>
+  <script src="./js/enforcement.js"></script>
+  <script src="./js/recovery.js"></script>
+  <script src="./js/discipline.js"></script>
+  <script src="./js/focus.js"></script>
+  <script src="./js/gate.js"></script>
+  <script src="./js/analytics.js"></script>
+  <script src="./js/settings.js"></script>
+  <script src="./js/jarvis.js"></script>
+  <script src="./js/app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => console.log('[JARVIS] ServiceWorker registered with scope:', reg.scope))
+          .catch(err => console.warn('[JARVIS] ServiceWorker registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
