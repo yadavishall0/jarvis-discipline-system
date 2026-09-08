@@ -1,0 +1,257 @@
+/* JARVIS Personal Discipline System - Responsive & Navigation HUD */
+
+/* Tactical Bottom Navigation (Mobile Primary) */
+.hud-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10, 14, 23, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-hud);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+  z-index: 500;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.nav-btn i {
+  font-size: 18px;
+}
+
+.nav-btn span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nav-btn.active {
+  color: var(--color-cyan);
+  background: rgba(0, 229, 255, 0.08);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+/* JARVIS Console Screen */
+.console-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: calc(100vh - 170px);
+  padding-bottom: 90px;
+}
+
+.console-feed {
+  flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-mono);
+}
+
+.console-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.entry-user {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 2px solid var(--text-muted);
+  align-self: flex-end;
+  max-width: 85%;
+}
+
+.entry-jarvis {
+  background: rgba(0, 229, 255, 0.06);
+  border-left: 2px solid var(--color-cyan);
+  align-self: flex-start;
+  max-width: 90%;
+}
+
+.console-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  margin-bottom: 2px;
+}
+
+.console-tag {
+  font-weight: 800;
+}
+
+.tag-jarvis { color: var(--color-cyan); }
+.tag-user { color: var(--text-muted); }
+
+.console-timestamp {
+  color: var(--text-muted);
+}
+
+/* Quick Commands Bar */
+.quick-cmds-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.quick-cmds-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-cmd-chip {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.quick-cmd-chip:hover, .quick-cmd-chip:active {
+  border-color: var(--color-cyan);
+  color: var(--color-cyan);
+}
+
+/* Console Input Row */
+.console-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.console-input {
+  flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hud);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  outline: none;
+}
+
+.console-input:focus {
+  border-color: var(--color-cyan);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.btn-mic {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btn-mic.active-listening {
+  color: var(--color-crimson);
+  border-color: var(--color-crimson);
+  box-shadow: 0 0 15px rgba(255, 23, 68, 0.5);
+  animation: pulse-mic 1s infinite;
+}
+
+@keyframes pulse-mic {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Mobile Screens Adjustments (360px - 430px) */
+@media (max-width: 480px) {
+  .hud-metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-title {
+    font-size: 20px;
+  }
+
+  .hero-action-buttons {
+    flex-direction: column;
+  }
+
+  .hero-action-buttons .btn {
+    width: 100%;
+  }
+
+  .focus-timer-ring-container {
+    width: 220px;
+    height: 220px;
+  }
+
+  .focus-countdown {
+    font-size: 34px;
+  }
+
+  .score-big-number {
+    font-size: 48px;
+  }
+}
+
+/* Desktop Command Center Expansion (min-width: 768px) */
+@media (min-width: 768px) {
+  .hud-header-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .hud-metrics-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .dashboard-container {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-areas: 
+      "alert alert"
+      "recovery recovery"
+      "hero upcoming";
+  }
+
+  .escalation-alert { grid-area: alert; }
+  .recovery-proposal-card { grid-area: recovery; }
+  .current-mission-hero { grid-area: hero; }
+  .upcoming-section { grid-area: upcoming; }
+}
