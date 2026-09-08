@@ -1,0 +1,189 @@
+/* JARVIS Personal Discipline System - Routine Timeline & Builder */
+
+.routine-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 90px;
+}
+
+.routine-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-feed {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: 10px;
+}
+
+.timeline-row {
+  display: flex;
+  gap: 16px;
+  position: relative;
+  padding-bottom: 24px;
+}
+
+.timeline-row:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-time-col {
+  width: 55px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding-top: 2px;
+}
+
+.timeline-start {
+  font-weight: 800;
+  color: var(--color-cyan);
+}
+
+.timeline-end {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.timeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 16px;
+}
+
+.node-circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--text-muted);
+  z-index: 2;
+  margin-top: 4px;
+}
+
+.node-line {
+  position: absolute;
+  top: 18px;
+  bottom: -4px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.timeline-row:last-child .node-line {
+  display: none;
+}
+
+.timeline-card {
+  flex: 1;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s;
+}
+
+.timeline-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timeline-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.timeline-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.badge-category {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--color-cyan);
+}
+
+.timeline-duration {
+  color: var(--text-muted);
+}
+
+.timeline-target {
+  color: var(--color-emerald);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Status States */
+.row-active .node-circle {
+  border-color: var(--color-emerald);
+  background: var(--color-emerald);
+  box-shadow: 0 0 10px var(--color-emerald);
+}
+
+.row-active .timeline-card {
+  border-color: var(--color-emerald);
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.15);
+}
+
+.row-completed .node-circle {
+  border-color: var(--color-cyan);
+  background: var(--color-cyan);
+}
+
+.row-completed .timeline-card {
+  opacity: 0.75;
+}
+
+.row-skipped .node-circle {
+  border-color: var(--color-amber);
+  background: var(--color-amber);
+}
+
+.row-missed .node-circle {
+  border-color: var(--color-crimson);
+  background: var(--color-crimson);
+}
+
+.status-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.status-active { color: var(--color-emerald); background: rgba(0, 255, 157, 0.15); }
+.status-completed { color: var(--color-cyan); background: rgba(0, 229, 255, 0.15); }
+.status-skipped { color: var(--color-amber); background: rgba(245, 158, 11, 0.15); }
+.status-missed { color: var(--color-crimson); background: rgba(255, 23, 68, 0.15); }
+.status-planned { color: var(--text-muted); background: rgba(255, 255, 255, 0.05); }
+.status-delayed { color: #f97316; background: rgba(249, 115, 22, 0.15); }
